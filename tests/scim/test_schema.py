@@ -46,6 +46,8 @@ class TestUser:
         assert d['emails'][0]['value'] == u.emails[0].value
         assert d['emails'][0]['primary'] == u.emails[0].primary
         assert list(d.keys())[-1] == 'meta'
+        assert d['addresses'][0]['streetAddress'] == \
+            u.addresses[0].street_address
 
     def test_deserialize(self):
         d = {}
@@ -100,3 +102,49 @@ class TestUser:
         assert d['addresses'][0]['type'] == u.addresses[0].type
         assert d['addresses'][1]['streetAddress'] == \
             u.addresses[1].street_address
+
+    def test_provider(self):
+
+        # This is all repetitive with above but I wanted the SP code checked
+
+        sp = schema.ServiceProviderConfiguration()
+
+        sp.documentation_url = "http://readthedocs.org"
+        sp.bulk.supported = True
+        sp.patch.supported = True
+        sp.change_password.supported = True
+
+        auths = schema.AuthenticationScheme()
+        auths.name = "OAuth Bearer Token"
+        auths.description = "Authentication Scheme using the OAuth Bearer" \
+                            " Token Standard"
+        sp.authentication_schemes.append(auths)
+
+        ssp = sp.serialize()
+
+        assert ssp["documentationUrl"] == sp.documentation_url
+        assert ssp["bulk"]["supported"] == sp.bulk.supported
+        assert ssp['authenticationSchemes'][0]["name"] == \
+            sp.authentication_schemes[0].name
+
+        asp = {}
+        asp["bulk"] = {'supported': True}
+        asp["patch"] = {'supported': True}
+
+        auths = [{
+            "name": "OAuth Bearer Token",
+            "description": "Authentication Scheme using the OAuth Bearer"
+                           " Token Standard",
+            "specUrl": "http://tools.ietf.org/html/draft-ietf-oauth-v2-b"
+                       "earer-01",
+            "documentationUrl": "http://example.com/help/oauth.html",
+            "type": "oauthbearertoken",
+            "primary": True
+            }]
+        asp['authenticationSchemes'] = auths
+
+        dd = schema.ServiceProviderConfiguration.deserialize(asp)
+
+        assert asp["bulk"]["supported"] == dd.bulk.supported
+        assert asp['authenticationSchemes'][0]['name'] == \
+            dd.authentication_schemes[0].name

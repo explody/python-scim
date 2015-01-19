@@ -13,13 +13,11 @@ class Base:
 
 
 class String(Base):
-    """A sequence of characters (v1.1 § 3.1.1).
-    """
+    """A sequence of characters (v1.1 § 3.1.1)."""
 
 
 class Boolean(Base):
-    """The literal "true" or "false" (v1.1 § 3.1.2).
-    """
+    """The literal "true" or "false" (v1.1 § 3.1.2)."""
 
     def serialize(self, value):
         return value
@@ -29,8 +27,7 @@ class Boolean(Base):
 
 
 class Decimal(Base):
-    """A Decimal number with no fractional digits (v1.1 § 3.1.3).
-    """
+    """A Decimal number with no fractional digits (v1.1 § 3.1.3)."""
 
     def deserialize(self, text):
         if text is not None:
@@ -38,8 +35,7 @@ class Decimal(Base):
 
 
 class Integer(Base):
-    """A Decimal number with no fractional digits (v1.1 § 3.1.4).
-    """
+    """A Decimal number with no fractional digits (v1.1 § 3.1.4)."""
 
     def deserialize(self, text):
         if text is not None:

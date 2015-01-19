@@ -5,7 +5,7 @@ from .group import Group
 from .enterprise import EnterpriseUser, Manager
 from .complex import Address, Name
 from .tenant import Tenant
-from .provider import ServiceProviderConfiguration
+from .provider import ServiceProviderConfiguration, AuthenticationScheme
 
 __all__ = [
     'Base',
@@ -13,5 +13,5 @@ __all__ = [
     'EnterpriseUser', 'Manager',
     'Tenant',
     'Name', 'Address',
-    'ServiceProviderConfiguration'
+    'ServiceProviderConfiguration', 'AuthenticationScheme'
 ]
