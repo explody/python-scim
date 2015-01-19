@@ -1,5 +1,4 @@
-from . import attributes, types
-
+from . import attributes, types, formatters
 
 class Address(attributes.BaseMultiValue):
 
@@ -22,6 +21,14 @@ class Address(attributes.BaseMultiValue):
     # and Sweden are "US" and "SE", respectively.
     country = attributes.Singular(types.String)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.addr_attrs = ['street_address', 'locality', 'region',
+                           'postal_code', 'country']
+
+    @property
+    def formatted(self):
+        return formatters.SimpleFormatter(self, self.addr_attrs, ", ")
 
 class Name(attributes.Base):
     """The components of the User's real name.
@@ -29,7 +36,7 @@ class Name(attributes.Base):
 
     # The full name, including all middle names, titles, and suffixes as
     # appropriate, formatted for display (e.g. Ms. Barbara Jane Jensen, III.).
-    formatted = attributes.Singular(types.String)
+    #formatted = attributes.Singular(types.String)
 
     # The family name of the User, or "Last Name" in
     # most Western languages (e.g. Jensen given the full name Ms.
@@ -54,3 +61,13 @@ class Name(attributes.Base):
     # Western languages (e.g. III. given the full name
     # Ms. Barbara Jane Jensen, III.).
     honorific_suffix = attributes.Singular(types.String)
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name_attrs = ['honorific_prefix', 'given_name', 'middle_name',
+                           'family_name', 'honorific_suffix']
+
+    @property
+    def formatted(self):
+        return formatters.SimpleFormatter(self, self.name_attrs)
