@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from scim import schema
+import pprint
+import inspect
 
 
 class TestUser:
