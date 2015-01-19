@@ -4,6 +4,7 @@ import json
 import re
 from .types import Boolean, String
 
+import pprint
 
 def camelize(name):
     name = name.strip()
@@ -202,6 +203,7 @@ class Complex(Base):
             # Being accessed as an instance; bail.
             raise AttributeError("can't set attribute")
 
+        print("HERE 1")
         # Continue along with normal behavior.
         super().__set__(instance, value)
 
@@ -304,6 +306,7 @@ class List(Complex):
         # Return the serialized data.
         return data
 
+
     def deserialize(self, text):
         if isinstance(text, str):
             # Decode the data dictionary from JSON.
@@ -359,26 +362,21 @@ class BaseMultiValue(Base):
         # Return the serialized data.
         return data
 
-
-class MultiValue(List):
+class BaseMulti(List):
 
     def _convert(self, value):
-        if type(value) != self.attribute:
-            obj = self.attribute()
-            obj.value = value
-            value = obj
-
+        # Default
         return value
 
-    def __init__(self, type_=Singular(String), *args, **kwargs):
-        #! The type of the value attring.
-        self.attribute = type_ = type(
-            'Value', (BaseMultiValue,), {'value': type_})
+    def __init__(self, type_, *args, **kwargs):
 
-        # Continue initialization.
-        super().__init__(type_, convert=self._convert, *args, **kwargs)
+        if 'convert' not in kwargs:
+            kwargs['convert'] = self._convert
+
+        super().__init__(type_, *args, **kwargs)
 
     def serialize(self, obj):
+
         # Grab the data object to serialize.
         if self.name in obj._state:
             obj = obj._state[self.name]
@@ -416,3 +414,33 @@ class MultiValue(List):
 
         # Return the constructed instance.
         return instance
+
+class MultiValue(BaseMulti):
+
+    def _convert(self, value):
+        if type(value) != self.attribute:
+            obj = self.attribute()
+            obj.value = value
+            value = obj
+        return value
+
+    def __init__(self, type_=Singular(String), *args, **kwargs):
+        #! The type of the value attring.
+        self.attribute = type_ = type(
+            'Value', (BaseMultiValue,), {'value': type_})
+
+        # Continue initialization.
+        super().__init__(type_, convert=self._convert, *args, **kwargs)
+
+
+class MultiComplex(BaseMulti):
+
+    def __init__(self, type_, *args, **kwargs):
+
+        #! The type of the value attrs.
+        self.attribute = type_ = type(
+            type_.__name__, (type_,), {'value': type_})
+
+        # Continue initialization.
+        super().__init__(type_, *args, **kwargs)
+
