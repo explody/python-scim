@@ -20,7 +20,19 @@ class TestUser:
         u.emails.append('bob@example.com')
         u.emails[0].primary = False
 
+        ua = schema.Address()
+        ua.street_address = "123 Main St"
+        ua.locality = "Sometown"
+        ua.region = "Some Province"
+        ua.country = "XX"
+
+        u.addresses.append(ua)
+
         d = u.serialize()
+
+        print()
+        print("Serialized:")
+        pprint.pprint(d)
 
         assert d['id'] == u.id
         assert d['externalId'] == u.external_id
@@ -47,6 +59,29 @@ class TestUser:
         d['name']['givenName'] = 'Bob'
         d['preferredLanguage'] = 'en_US'
         d['emails'] = [{'value': 'bob@example.com', 'primary': 'false'}]
+        d['addresses'] = []
+        d['addresses'].append({
+                              "type": "work",
+                              "streetAddress": "100 Universal City Plaza",
+                              "locality": "Hollywood",
+                              "region": "CA",
+                              "postalCode": "91608",
+                              "country": "US",
+                              "formatted": "100 Universal City Plaza\n"
+                                           "Hollywood, CA 91608 US",
+                              "primary": True,
+                              })
+        d['addresses'].append({
+                              "type": "work",
+                              "streetAddress": "911 Universal City Plaza",
+                              "locality": "Hollywood",
+                              "region": "CA",
+                              "postalCode": "91608",
+                              "country": "US",
+                              "formatted": "911 Universal City Plaza\n"
+                                           "Hollywood, CA 91608 US",
+                              "primary": True
+                              })
 
         u = schema.User.deserialize(d)
 
@@ -61,3 +96,7 @@ class TestUser:
         assert len(d['emails']) == len(u.emails)
         assert d['emails'][0]['value'] == u.emails[0].value
         assert d['emails'][0]['primary'] == u.emails[0].primary
+        assert len(d['addresses']) == 2
+        assert d['addresses'][0]['type'] == u.addresses[0].type
+        assert d['addresses'][1]['streetAddress'] == \
+            u.addresses[1].street_address
