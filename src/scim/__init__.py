@@ -7,7 +7,7 @@
 """
 
 # Version of the package.
-__version__ = VERSION = "0.2.1"
+__version__ = VERSION = "0.3"
 
 # Version of the SCIM standard supported.
 SCIM_VERSION = "1.1"
